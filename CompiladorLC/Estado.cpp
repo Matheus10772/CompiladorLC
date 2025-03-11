@@ -1,55 +1,37 @@
 #include "Estado.hpp"
 
-class Estado  
-{  
-public:  
+bool Estado::regexVerificador(std::string caracteres) {
 
-    Estado(std::vector<std::string> regexs, std::vector<Estado*> estadosAlcancavies);
-   
+	for (std::vector<std::string>::iterator indice = padroesRegex.begin(); indice != padroesRegex.end(); indice++) {
+		std::regex padrao((*indice));
+		if (std::regex_match(caracteres, padrao)) {
+			return true;
+		}
 
-   bool regexVerificador(std::string caracteres) {
-    
-    for (std::vector<std::string>::iterator indice = padroesRegex.begin(); indice != padroesRegex.end(); indice++) {
-     std::regex padrao((*indice));
-     if (std::regex_match(caracteres, padrao)) {
-      return true;
-     }
+	}
 
-    }
+	return false;
+}
 
-    return false;
-   }
+Estado* Estado::getNextEstado() {
+	if (currentEstadoIndice != estadosAlcancaveis.end()) {
+		return *currentEstadoIndice++;
+	}
+	else {
+		currentEstadoIndice = estadosAlcancaveis.begin();
+		return nullptr;
+	}
 
-   Estado* getNextEstado() {
-    if (currentEstadoIndice != estadosAlcancaveis.end()) {
-     return *currentEstadoIndice++;
-    }
-    else {
-     currentEstadoIndice = estadosAlcancaveis.begin();
-     return nullptr;
-    }
-    
-   }
+}
 
-   std::string getNomeEstado() {
-       return this->name;
-   }
+std::string Estado::getNomeEstado() {
+	return this->name;
+}
 
 
-
-private:
-    std::string name;
-	std::vector<std::string> padroesRegex;
-	std::vector<Estado*>::iterator currentEstadoIndice;
-	std::vector<Estado*> estadosAlcancaveis;
-
-	
-
-};
-
-Estado::Estado(std::vector<std::string> regexs, std::vector<Estado*> estadosAlcancavies)  
-{  
+Estado::Estado(std::vector<std::string> regexs, std::vector<Estado*> estadosAlcancaveis)
+{
 	this->padroesRegex = regexs;
-	this->estadosAlcancaveis = estadosAlcancavies;
+	this->estadosAlcancaveis = estadosAlcancaveis; // Corrigido de 'estadosAlcancavies' para 'estadosAlcancaveis'
 	this->currentEstadoIndice = this->estadosAlcancaveis.begin();
 }
