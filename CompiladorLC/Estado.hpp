@@ -6,24 +6,37 @@
 #include <iostream> 
 #include <vector>
 #include <regex>
+#include <unordered_map>
+
+enum TipoEstado {
+	INICIAL,
+	FINAL,
+	NORMAL
+};
 
 class Estado {
 public:
-    std::string name;
 
-    bool regexVerificador(const std::string caracteres);
-    std::string getNomeEstado();
-    std::shared_ptr<Estado> getNextEstado();
-
-    Estado(std::vector<std::string> regexs, std::vector<std::shared_ptr<Estado>> estadosAlcancaveis);
+    Estado(std::string estadoName, std::vector<std::string> regexs, std::unordered_map<std::string ,std::shared_ptr<Estado>> estadosAlcancaveis, TipoEstado tipo);
+    bool addEstadoAlcancavel(std::shared_ptr<Estado> estado);
 
 private:
-    std::string nome;
+    //Variáveis
+    std::string name;
     std::vector<std::string> padroesRegex;
-    std::vector<std::shared_ptr<Estado>> estadosAlcancaveis;
-    std::vector<std::shared_ptr<Estado>>::iterator currentEstadoIndice;
+    std::unordered_map<std::string, std::shared_ptr<Estado>> estadosAlcancaveis;
+	TipoEstado tipo;
 
+    //Métodos
+    bool regexVerificador(const std::string caracteres);
+    std::string getNomeEstado();
+    std::shared_ptr<Estado> procurarEstadoAlncancaveis(std::string estadoName);
+    TipoEstado getTipoEstado();
     
+
+
+    //Classe responsável pelo controle
+	friend class GeradorDeAutomatos;
 };
 
 

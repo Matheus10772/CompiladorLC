@@ -13,15 +13,25 @@ bool Estado::regexVerificador(std::string caracteres) {
 	return false;
 }
 
-std::shared_ptr<Estado> Estado::getNextEstado() {
-	if (currentEstadoIndice != estadosAlcancaveis.end()) {
-		return *currentEstadoIndice++;
+std::shared_ptr<Estado> Estado::procurarEstadoAlncancaveis(std::string estadoName) {
+	return this->estadosAlcancaveis[estadoName];
+}
+
+TipoEstado Estado::getTipoEstado()
+{
+	return this->tipo;
+}
+
+bool Estado::addEstadoAlcancavel(std::shared_ptr<Estado> estado)
+{
+	if (estado != nullptr)
+	{
+		this->estadosAlcancaveis[estado->getNomeEstado()] = estado;
+		return true;
 	}
 	else {
-		currentEstadoIndice = estadosAlcancaveis.begin();
-		return nullptr;
+		return false;
 	}
-
 }
 
 std::string Estado::getNomeEstado() {
@@ -29,9 +39,9 @@ std::string Estado::getNomeEstado() {
 }
 
 
-Estado::Estado(std::vector<std::string> regexs, std::vector<std::shared_ptr<Estado>> estadosAlcancaveis)
+Estado::Estado(std::string estadoName, std::vector<std::string> regexs, std::unordered_map<std::string, std::shared_ptr<Estado>> estadosAlcancaveis, TipoEstado tipo)
 {
 	this->padroesRegex = regexs;
 	this->estadosAlcancaveis = estadosAlcancaveis; // Corrigido de 'estadosAlcancavies' para 'estadosAlcancaveis'
-	this->currentEstadoIndice = this->estadosAlcancaveis.begin();
+	this->tipo = tipo;
 }

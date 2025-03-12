@@ -1,31 +1,60 @@
-#include <vector>
-#include <map>
-#include <string>
-#include <algorithm>
-class Automato {
-private:
-    std::vector<std::string> estados;
-    std::vector<char> alfabeto;
-    std::map<std::pair<std::string, char>, std::string> transicoes;
-    std::string estadoInicial;
-    std::vector<std::string> estadosFinais;
+#include "GeradorDeAutomatos.hpp"
 
-public:
-    Automato(const std::vector<std::string>& estados, const std::vector<char>& alfabeto,
-             const std::map<std::pair<std::string, char>, std::string>& transicoes,
-             const std::string& estadoInicial, const std::vector<std::string>& estadosFinais)
-        : estados(estados), alfabeto(alfabeto), transicoes(transicoes),
-          estadoInicial(estadoInicial), estadosFinais(estadosFinais) {}
+bool Automato::addEstado(std::vector<std::string> regexs, std::vector<std::string> estadosAlcancaveis, TipoEstado tipo)
+{
+	try
+	{
+		std::vector<std::shared_ptr<Estado>> estadosAlcancaveisPtr;
 
-    bool processarEntrada(const std::string& entrada) {
-        std::string estadoAtual = estadoInicial;
-        for (char simbolo : entrada) {
-            auto it = transicoes.find({estadoAtual, simbolo});
-            if (it == transicoes.end()) {
-                return false;
-            }
-            estadoAtual = it->second;
-        }
-        return std::find(estadosFinais.begin(), estadosFinais.end(), estadoAtual) != estadosFinais.end();
-    }
-};
+		for (std::vector<std::string>::iterator indice = estadosAlcancaveis.begin(); indice != estadosAlcancaveis.end(); indice++)
+		{
+			std::shared_ptr<Estado> estado = procurarNosEstados(*indice);
+			if (estado != nullptr)
+			{
+				estadosAlcancaveisPtr.push_back(estado);
+			}
+
+		}
+
+		std::string estadoName = getNextEstadoName();
+		std::shared_ptr<Estado> estado = std::make_shared<Estado>(estadoName, regexs, estadosAlcancaveisPtr, tipo);
+
+		if (estadosAlcancaveis.begin()->compare("self"))
+		{
+			estado->addEstadoAlcancavel(estado);
+		}
+
+		this->todosOsEstados[estadoName] = estado;
+
+		return true;
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+	
+}
+
+std::shared_ptr<Estado> Automato::procurarNosEstados(std::string estadoName)
+{
+	return this->todosOsEstados[estadoName];
+}
+
+std::string Automato::getNextEstadoName()
+{
+	std::string name("q" + this->contadorEstados);
+	this->contadorEstados++;
+	return name;
+}
+
+Automato::Automato(std::string automatoName, std::vector<std::string> regexs)
+{
+	this->automatoName = automatoName;
+
+	std::vector<std::string> estadosAlcancaveis;
+	estadosAlcancaveis.push_back("self");
+
+	TipoEstado firstEstadoTipo = TipoEstado::INICIAL;
+
+	addEstado(regexs, estadosAlcancaveis, firstEstadoTipo);
+}
