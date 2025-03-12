@@ -13,15 +13,15 @@ public:
 
     bool regexVerificador(const std::string caracteres);
     std::string getNomeEstado();
-    Estado* getNextEstado();
+    std::shared_ptr<Estado> getNextEstado();
 
-    Estado(std::vector<std::string> regexs, std::vector<Estado*> estadosAlcancaveis);
+    Estado(std::vector<std::string> regexs, std::vector<std::shared_ptr<Estado>> estadosAlcancaveis);
 
 private:
     std::string nome;
     std::vector<std::string> padroesRegex;
-    std::vector<Estado*>::iterator currentEstadoIndice;
-    std::vector<Estado*> estadosAlcancaveis;
+    std::vector<std::shared_ptr<Estado>> estadosAlcancaveis;
+    std::vector<std::shared_ptr<Estado>>::iterator currentEstadoIndice;
 
     
 };

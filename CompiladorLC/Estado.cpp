@@ -13,7 +13,7 @@ bool Estado::regexVerificador(std::string caracteres) {
 	return false;
 }
 
-Estado* Estado::getNextEstado() {
+std::shared_ptr<Estado> Estado::getNextEstado() {
 	if (currentEstadoIndice != estadosAlcancaveis.end()) {
 		return *currentEstadoIndice++;
 	}
@@ -29,7 +29,7 @@ std::string Estado::getNomeEstado() {
 }
 
 
-Estado::Estado(std::vector<std::string> regexs, std::vector<Estado*> estadosAlcancaveis)
+Estado::Estado(std::vector<std::string> regexs, std::vector<std::shared_ptr<Estado>> estadosAlcancaveis)
 {
 	this->padroesRegex = regexs;
 	this->estadosAlcancaveis = estadosAlcancaveis; // Corrigido de 'estadosAlcancavies' para 'estadosAlcancaveis'
