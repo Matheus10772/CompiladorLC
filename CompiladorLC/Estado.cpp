@@ -1,20 +1,26 @@
-#include "Estado.hpp"
+﻿#include "Estado.hpp"
 
-bool Estado::regexVerificador(std::string caracteres) {
+std::shared_ptr<Estado> Estado::regexVerificador(std::string caracteres) {
 
-	for (std::vector<std::string>::iterator indice = padroesRegex.begin(); indice != padroesRegex.end(); indice++) {
+	for (std::vector<std::string>::iterator indice = padroesRegexPermanencia.begin(); indice != padroesRegexPermanencia.end(); indice++) {
 		std::regex padrao((*indice));
 		if (std::regex_match(caracteres, padrao)) {
-			return true;
+			return shared_from_this();
 		}
-
 	}
 
-	return false;
+	for (std::vector<std::string>::iterator indice = padroesRegexTransicao.begin(); indice != padroesRegexTransicao.end(); indice++) {
+		std::regex padrao((*indice));
+		if (std::regex_match(caracteres, padrao)) {
+			return this->estadoAlcavel;
+		}
+	}
+
+	return nullptr;
 }
 
-std::shared_ptr<Estado> Estado::procurarEstadoAlncancaveis(std::string estadoName) {
-	return this->estadosAlcancaveis[estadoName];
+std::shared_ptr<Estado> Estado::getEstadoAlcavel() {
+	return this->estadoAlcavel;
 }
 
 TipoEstado Estado::getTipoEstado()
@@ -26,7 +32,7 @@ bool Estado::addEstadoAlcancavel(std::shared_ptr<Estado> estado)
 {
 	if (estado != nullptr)
 	{
-		this->estadosAlcancaveis[estado->getNomeEstado()] = estado;
+		this->estadoAlcavel = estado;
 		return true;
 	}
 	else {
@@ -39,9 +45,11 @@ std::string Estado::getNomeEstado() {
 }
 
 
-Estado::Estado(std::string estadoName, std::vector<std::string> regexs, std::unordered_map<std::string, std::shared_ptr<Estado>> estadosAlcancaveis, TipoEstado tipo)
+Estado::Estado(std::string estadoName, std::vector<std::string> regexsPermanencia, std::vector<std::string> regexsTransicao, TipoEstado tipo)
 {
-	this->padroesRegex = regexs;
-	this->estadosAlcancaveis = estadosAlcancaveis; // Corrigido de 'estadosAlcancavies' para 'estadosAlcancaveis'
+	this->name = estadoName;
+	this->padroesRegexPermanencia = regexsPermanencia;
+	this->padroesRegexTransicao = regexsTransicao;
 	this->tipo = tipo;
 }
+           

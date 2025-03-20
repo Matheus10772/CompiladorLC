@@ -11,7 +11,7 @@ void imprimirVectorDeStrings(std::vector<std::string> vetor) {
     }
 }
 
-std::vector<std::string> leArquivo(std::string nomeArquivo) {
+std::vector<std::string> lerArquivo(std::string nomeArquivo) {
     std::ifstream arquivo(nomeArquivo);
     std::vector<std::string> linhas;
     std::string linha;
@@ -66,7 +66,7 @@ int main()
 	ajustesIniciais();
 
     std::cout << "Hello World!\n";
-    std::vector<std::string> linhas = leArquivo("C:\\Users\\mathe\\Downloads\\Novo(a) Documento de Texto.txt");
+    std::vector<std::string> linhas = lerArquivo("C:\\Users\\mathe\\Downloads\\Novo(a) Documento de Texto.txt");
     std::cout << "Conteúdo do arquivo lido: ";
 	imprimirVectorDeStrings(linhas);
     

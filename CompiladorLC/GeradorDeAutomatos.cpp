@@ -1,28 +1,21 @@
-#include "GeradorDeAutomatos.hpp"
+﻿#include "GeradorDeAutomatos.hpp"
 
-bool Automato::addEstado(std::vector<std::string> regexs, std::vector<std::string> estadosAlcancaveis, TipoEstado tipo)
+bool Automato::addEstado(std::vector<std::string> regexsPermanencia, std::vector<std::string> regexsTransicao, std::string estadoAlcancavel, TipoEstado tipo)
 {
 	try
 	{
-		std::vector<std::shared_ptr<Estado>> estadosAlcancaveisPtr;
+		std::shared_ptr<Estado> estadoAlcancavelPtr = nullptr;
 
-		for (std::vector<std::string>::iterator indice = estadosAlcancaveis.begin(); indice != estadosAlcancaveis.end(); indice++)
+
+
+		std::shared_ptr<Estado> estado = procurarNosEstados(estadoAlcancavel);
+		if (estado != nullptr)
 		{
-			std::shared_ptr<Estado> estado = procurarNosEstados(*indice);
-			if (estado != nullptr)
-			{
-				estadosAlcancaveisPtr.push_back(estado);
-			}
-
+			estadoAlcancavelPtr = estado;
 		}
 
 		std::string estadoName = getNextEstadoName();
-		std::shared_ptr<Estado> estado = std::make_shared<Estado>(estadoName, regexs, estadosAlcancaveisPtr, tipo);
-
-		if (estadosAlcancaveis.begin()->compare("self"))
-		{
-			estado->addEstadoAlcancavel(estado);
-		}
+		std::shared_ptr<Estado> estado = std::make_shared<Estado>(estadoName, regexsPermanencia, regexsTransicao, estadoAlcancavelPtr, tipo);
 
 		this->todosOsEstados[estadoName] = estado;
 
@@ -40,6 +33,22 @@ std::shared_ptr<Estado> Automato::procurarNosEstados(std::string estadoName)
 	return this->todosOsEstados[estadoName];
 }
 
+bool Automato::addTransicaoEntreEstados(std::string estadoOrigem, std::string estadoDestino)
+{
+	std::shared_ptr<Estado> ptrEstadoOrigem= procurarNosEstados(estadoOrigem);
+	std::shared_ptr<Estado> ptrEstadoDestino = procurarNosEstados(estadoDestino);
+
+	if (ptrEstadoOrigem != nullptr && ptrEstadoDestino != nullptr)
+	{
+		ptrEstadoOrigem->addEstadoAlcancavel(ptrEstadoDestino);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 std::string Automato::getNextEstadoName()
 {
 	std::string name("q" + this->contadorEstados);
@@ -47,14 +56,15 @@ std::string Automato::getNextEstadoName()
 	return name;
 }
 
-Automato::Automato(std::string automatoName, std::vector<std::string> regexs)
+Automato::Automato(std::string automatoName, std::vector<std::string> regexsPermanencia, std::vector<std::string> regexsTransicao)
 {
 	this->automatoName = automatoName;
 
-	std::vector<std::string> estadosAlcancaveis;
-	estadosAlcancaveis.push_back("self");
-
 	TipoEstado firstEstadoTipo = TipoEstado::INICIAL;
 
-	addEstado(regexs, estadosAlcancaveis, firstEstadoTipo);
+	std::string estadoName = getNextEstadoName();
+	std::shared_ptr<Estado> estado = std::make_shared<Estado>(estadoName, regexsPermanencia, regexsTransicao, firstEstadoTipo);
+
+	this->todosOsEstados[estadoName] = estado;
+
 }

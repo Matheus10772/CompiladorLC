@@ -1,4 +1,4 @@
-#ifndef ESTADO_HPP
+Ôªø#ifndef ESTADO_HPP
 #define ESTADO_HPP
 
 
@@ -14,28 +14,29 @@ enum TipoEstado {
 	NORMAL
 };
 
-class Estado {
+class Estado : std::enable_shared_from_this<Estado> {
 public:
 
-    Estado(std::string estadoName, std::vector<std::string> regexs, std::unordered_map<std::string ,std::shared_ptr<Estado>> estadosAlcancaveis, TipoEstado tipo);
+    Estado(std::string estadoName, std::vector<std::string> regexsPermanencia, std::vector<std::string> regexsTransicao, TipoEstado tipo);
     bool addEstadoAlcancavel(std::shared_ptr<Estado> estado);
 
 private:
-    //Vari·veis
+    //Vari√°veis
     std::string name;
-    std::vector<std::string> padroesRegex;
-    std::unordered_map<std::string, std::shared_ptr<Estado>> estadosAlcancaveis;
+    std::vector<std::string> padroesRegexPermanencia;
+    std::vector<std::string> padroesRegexTransicao;
+    std::shared_ptr<Estado> estadoAlcavel = nullptr;
 	TipoEstado tipo;
 
-    //MÈtodos
-    bool regexVerificador(const std::string caracteres);
+    //M√©todos
+    std::shared_ptr<Estado> regexVerificador(const std::string caracteres);
     std::string getNomeEstado();
-    std::shared_ptr<Estado> procurarEstadoAlncancaveis(std::string estadoName);
+    std::shared_ptr<Estado> getEstadoAlcavel();
     TipoEstado getTipoEstado();
     
 
 
-    //Classe respons·vel pelo controle
+    //Classe respons√°vel pelo controle
 	friend class GeradorDeAutomatos;
 };
 
