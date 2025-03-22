@@ -1,9 +1,6 @@
-#include <iostream>
+﻿#include "Estado.hpp"
+#include "GeradorDeAutomatos.hpp"
 #include <fstream>
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <iterator>
 
 void imprimirVectorDeStrings(std::vector<std::string> vetor) {
     for (std::string linha : vetor) {
@@ -69,16 +66,23 @@ int main()
     std::vector<std::string> linhas = lerArquivo("C:\\Users\\mathe\\Downloads\\Novo(a) Documento de Texto.txt");
     std::cout << "Conteúdo do arquivo lido: ";
 	imprimirVectorDeStrings(linhas);
+
+	std::vector<std::string> regexs = { "a", "b", "c" };
+    Automato LCAutomato("My Automato", regexs); //q0
+
+    std::vector<std::string> regexs2 = { "d", "e", "f" }; //q1
+    std::vector<std::string> regexs3 = { "g", "h", "i" }; //q2
+
+    LCAutomato.addEstado(regexs2, TipoEstado::NORMAL);
+    LCAutomato.addEstado(regexs3, TipoEstado::FINAL);
+
+    LCAutomato.addTransicaoEntreEstados("q0", "q1", std::vector<std::string>{"z"});
+    LCAutomato.addTransicaoEntreEstados("q1", "q2", std::vector<std::string>{"z"});
+
+    std::cout << LCAutomato.transitarEntreEstados("z") << std::endl;
+    std::cout << LCAutomato.transitarEntreEstados("z") << std::endl;
+
+    //LCAutomato.~Automato();
     
     return 0;
 }
-
-
-
-// Dicas para Começar: 
-//   1. Use a janela do Gerenciador de Soluções para adicionar/gerenciar arquivos
-//   2. Use a janela do Team Explorer para conectar-se ao controle do código-fonte
-//   3. Use a janela de Saída para ver mensagens de saída do build e outras mensagens
-//   4. Use a janela Lista de Erros para exibir erros
-//   5. Ir Para o Projeto > Adicionar Novo Item para criar novos arquivos de código, ou Projeto > Adicionar Item Existente para adicionar arquivos de código existentes ao projeto
-//   6. No futuro, para abrir este projeto novamente, vá para Arquivo > Abrir > Projeto e selecione o arquivo. sln
