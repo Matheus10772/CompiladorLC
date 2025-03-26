@@ -33,21 +33,10 @@ private:
 
     typedef std::pair<std::vector<std::string>, std::shared_ptr<Estado>> EstadoAlcancavel;
 
-    //Variáveis
     std::string name;
     std::vector<std::string> padroesRegexPermanencia;
     std::unordered_map<std::string, EstadoAlcancavel> estadosAlcancaveis;
 	TipoEstado tipo;
-
-    //Métodos
-    
-    
-    
-    
-    
-
-
-    //Classe responsável pelo controle
 	friend class GeradorDeAutomatos;
 };
 
